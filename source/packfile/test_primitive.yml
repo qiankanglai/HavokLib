@@ -1,0 +1,69 @@
+version: 1
+
+prim00:
+  type: primitive
+  size: 1
+  alignment: 1
+
+prim01:
+  type: primitive
+  size: 2
+  alignment: 1
+
+# template<class arg0> prim02
+prim02:
+  type: primitive
+  template:
+    class: arg0
+  size: 1
+  alignment: 1
+
+# template<class arg0, class arg1> prim03
+prim03:
+  type: primitive
+  template:
+    - class: arg0
+    - class: arg1
+  size: 1
+  alignment: 1
+
+# template<template<class subarg1> class arg0, class arg1> prim04
+prim04:
+  type: primitive
+  template:
+    - class:
+        arg0:
+          class: subarg1
+    - class: arg1
+  size: 1
+  alignment: 1
+
+# template<template<class subarg1> class arg1> prim05
+prim05:
+  type: primitive
+  template:
+    class:
+      arg1:
+        class: subarg1
+  size: 1
+  alignment: 1
+
+prim06:
+  type: primitive
+  template:
+    - class: arg0
+    - class: arg1
+  size: arg0
+  alignment: arg1
+
+# template<template<template<uint tag> class subarg1> class arg1> prim07
+prim07:
+  type: primitive
+  template:
+    class:
+      arg1:
+        class:
+          subarg1:
+            uint: tag
+  size: 1
+  alignment: 1

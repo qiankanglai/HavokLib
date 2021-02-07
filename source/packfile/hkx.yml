@@ -1,0 +1,66 @@
+version: 1
+import: hk_base
+
+hkNamedVariant:
+  type: memStruct
+  template:
+    class: esPointer
+  tied: hkRootLevelContainer
+  members:
+    name:
+      offsetSlot: 0
+      type:
+        esPointer: char
+    className:
+      offsetSlot: 1
+      type:
+        esPointer: char
+    variant:
+      offsetSlot: 2
+      type:
+        hkVariant: esPointer
+  patch:
+    - version: 700
+      members:
+        variant:
+          offsetSlot: 2
+          type:
+            esPointer: char
+
+hkRootLevelContainer:
+  type: memStruct
+  template:
+    class: esPointer
+    members:
+      variants:
+        hkHArray:
+          - hkNamedVariant: esPointer
+          - esPointer
+
+hkxEnvironmentVariable:
+  type: memStruct
+  template:
+    class: esPointer
+  tied: hkxEnvironment
+  members:
+    name:
+      offsetSlot: 0
+      type:
+        esPointer: char
+    value:
+      offsetSlot: 1
+      type:
+        esPointer: char
+
+hkxEnvironment:
+  type: memStruct
+  template:
+    class: esPointer
+  clampVersions: [0, 2014]
+  members:
+    variables:
+      offsetSlot: 0
+      type:
+        hkArray:
+          - hkxEnvironmentVariable: esPointer
+          - esPointer

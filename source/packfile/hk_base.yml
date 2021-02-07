@@ -1,0 +1,69 @@
+version: 1
+
+global:
+  versions:
+    prefix: HK
+    items: [500, 510, 550, 600, 610, 650, 660, 700, 710, 2010.1, 2010.2, 2011.1, 2011.2,
+            2011.3, 2012.1, 2012.2, 2013, 2014, 2015, 2016, 2017]
+  types:
+    memStruct:
+      type: struct
+      layouts:
+        - GNU
+        - VC
+      endian:
+        rule: ignore
+        types:
+          - esPointer
+
+hkArray:
+  type: memStruct
+  template:
+    - class: C
+    - class: esPointer
+  members: &hkArrayMembers
+    data:
+      esPointer: C
+    numItems: uint32
+    capacityAndFlags: uint32
+
+hkHArray:
+  type: inline
+  template:
+    - class: C
+    - class: esPointer
+  members:
+    data:
+      esPointer: C
+    numItems: uint32
+  patch:
+    - version: 700
+      type: memStruct
+      members: *hkArrayMembers
+
+hkVariant:
+  type: memStruct
+  template:
+    - class: esPointer
+  members:
+    object:
+      esPointer: void
+    classDesc:
+      esPointer: hkClass
+
+hkReferenceObject:
+  type: memStruct
+  template:
+    class: esPointer
+  members:
+    vtable:
+      esPointer: char
+    memSizeAndFlags: uint16
+    referenceCount: uint16
+  patch:
+    - version: 2016
+      members:
+        unk:
+          insertAfter: vtable
+          type:
+            esPointer: char

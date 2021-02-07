@@ -1,0 +1,573 @@
+version: 1
+import: hk_base
+
+hkaBone:
+  type: struct
+  template:
+    class: esPointer
+  members:
+    name:
+      esPointer: char
+    lockTranslation: int32
+
+hkaPartition:
+  type: struct
+  template:
+    class: esPointer
+  tied: hkaSkeleton
+  members:
+    name:
+      esPointer: char
+    startBoneIndex: int16
+    numBones: uint16
+
+LocalFrameOnBone:
+  type: struct
+  template:
+    class: esPointer
+  tied: hkaSkeleton
+  members:
+    localFrame:
+      esPointer: hkLocalFrame
+    boneIndex: int32
+  patch:
+    - version: 2012
+      members:
+        boneIndex: int16
+
+hkaSkeleton:
+  type: struct
+  template:
+    class: esPointer
+  inherits:
+    hkReferenceObject: esPointer
+  members:
+    name:
+      offsetSlot: 0
+      type:
+        esPointer: char
+    parentIndices:
+      offsetSlot: 1
+      type:
+        hkHArray:
+          - int16
+          - esPointer
+    bones:
+      offsetSlot: 2
+      type:
+        hkHArray:
+          - esPointer:
+            hkaBone: esPointer
+          - esPointer
+    transforms:
+      offsetSlot: 3
+      type:
+        hkHArray:
+        - hkQTransform
+        - esPointer
+  patch:
+    - version: 550
+      members:
+        floatSlots:
+          insertAfter: transforms
+          offsetSlot: 5
+          type:
+            hkHArray:
+              - esPointer: char
+              - esPointer
+    - version: 600
+      members:
+        localFrames:
+          insertAfter: floatSlots
+          offsetSlot: 6
+          type:
+            hkHArray:
+              - LocalFrameOnBone: esPointer
+              - esPointer
+    - version: 700
+      members:
+        bones:
+          offsetSlot: 2
+          type:
+            hkHArray:
+              - hkaBone: esPointer
+              - esPointer
+    - version: 2010
+      members:
+        referenceFloats:
+          offsetSlot: 4
+          insertAfter: transforms
+          type:
+            hkHArray:
+              - float
+              - esPointer
+    - version: 2012
+      members:
+        partitions:
+          offsetSlot: 7
+          insertAfter: localFrames
+          type:
+            hkHArray:
+              - hkaPartition: esPointer
+              - esPointer
+
+hkaAnimationContainer:
+  type: struct
+  template:
+    class: esPointer
+  members:
+    skeleton:
+      hkHArray:
+        - esPointer: hkaSkeleton
+        - esPointer
+    animations:
+      hkHArray:
+        - esPointer: hkaAnimation
+        - esPointer
+    bindings:
+      hkHArray:
+        - esPointer: hkaAnimationBinding
+        - esPointer
+    attachments:
+      hkHArray:
+        - esPointer: hkaBoneAttachment
+        - esPointer
+    skins:
+      hkHArray:
+        - esPointer: hkaMeshBinding
+        - esPointer
+  patch:
+    - version: 700
+      inherits:
+        hkReferenceObject: esPointer
+
+BlendHint:
+  type: enum
+  tied: hkaAnimationBinding
+  superType: uint32
+  items:
+    - NORMAL
+    - ADDITIVE
+  patch:
+    - version: 2014
+      items:
+        ADDITIVE_DEPRECATED:
+          insertAfter: NORMAL
+
+hkaAnimationBinding:
+  type: struct
+  template:
+    class: esPointer
+  members:
+    animation:
+      esPointer: hkaAnimation
+    transformTrackToBoneIndices:
+      hkHArray:
+        - int16
+        - esPointer
+    blendHint: BlendHint
+  patch:
+    - version: 550
+      members:
+        floatTrackToFloatSlotIndices:
+          insertAfter: transformTrackToBoneIndices
+          type:
+            hkHArray:
+              - int16
+              - esPointer
+    - version: 600
+      members:
+        skeletonName:
+          insertBefore: animation
+          type:
+            esPointer: char
+    - version: 700
+      inherits:
+        hkReferenceObject: esPointer
+    - version: 2012
+      members:
+        partitionIndices:
+          insertAfter: floatTrackToFloatSlotIndices
+          type:
+            hkHArray:
+              - int16
+              - esPointer
+
+hkaAnnotation:
+  type: struct
+  template:
+    class: esPointer
+  members:
+    time: float
+    text:
+      esPointer: char
+
+hkaAnnotationTrack:
+  type: struct
+  template:
+    class: esPointer
+  members:
+    name:
+      esPointer: char
+    annotations:
+      hkHArray:
+        - hkaAnnotation: esPointer
+        - esPointer
+
+hkaAnimation:
+  type: struct
+  template:
+    class: esPointer
+  inherits:
+    hkReferenceObject: esPointer
+  members:
+    animationType: uint32
+    duration: float
+    numOfTransformTracks: uint32
+    extractedMotion:
+      esPointer: hkaAnimatedReferenceFrame
+    annotations:
+      hkHArray:
+        - hkaAnnotationTrack: esPointer
+        - esPointer
+  patch:
+    - version: 550
+      members:
+        numOfFloatTracks:
+          insertAfter: numOfTransformTracks
+          type: uint32
+
+hkaAnimatedReferenceFrame:
+  type: struct
+  template:
+    class: esPointer
+  inherits:
+    hkReferenceObject: esPointer
+  members: null
+  patch:
+    - version: 2012
+      members:
+        frameType: hkaAnimatedReferenceFrameType
+
+hkaDefaultAnimatedReferenceFrame:
+  type: struct
+  template:
+    class: esPointer
+  inherits:
+    hkaAnimatedReferenceFrame: esPointer
+  members:
+    up: Vector4A16
+    forward: Vector4A16
+    duration: float
+    referenceFrameSamples:
+      hkHArray:
+        - Vector4A16
+        - esPointer
+
+hkaInterleavedAnimation:
+  type: struct
+  alias:
+    - hkaInterleavedSkeletalAnimation
+    - hkaInterleavedUncompressedAnimation
+  template:
+    class: esPointer
+  inherits:
+    hkaAnimation: esPointer
+  members:
+    transforms:
+      hkHArray:
+        - hkQTransform
+        - esPointer
+  patch:
+    - version: 550
+      members:
+        floats:
+          insertAfter: transforms
+          type:
+            hkHArray:
+              - float
+              - esPointer
+
+hkaQuantizationFormat:
+  type: struct
+  members:
+    maxBitWidth: uint8
+    preserved: uint8
+    numD: uint32
+    offsetIdx: uint32;
+    scaleIdx: uint32
+    bitWidthIdx: uint32
+
+hkaDeltaCompressedAnimation:
+  type: struct
+  alias: hkaDeltaCompressedSkeletalAnimation
+  template:
+    class: esPointer
+  clampVersions: [0, 2010]
+  inherits:
+    hkaAnimation: esPointer
+  members:
+    numberOfPoses: uint32
+    blockSize: uint32
+    qFormat: hkaQuantizationFormat
+    quantizedDataIdx: uint32
+    quantizedDataSize: uint32
+    staticMaskIdx: uint32
+    staticMaskSize: uint32
+    maskDOFsIdx: uint32
+    maskDOFsSize: uint32
+    totalBlockSize: uint32
+    lastBlockSize: uint32
+    dataBuffer:
+      hkHArray:
+        - uint8
+        - esPointer
+  patch:
+    - version: 600
+      members:
+        numStaticTransformDOFs:
+          insertAfter: maskDOFsSize
+          type: uint32
+        numDynamicTransformDOFs:
+          insertBefore: totalBlockSize
+          type: uint32
+
+hkaWaveletCompressedAnimation:
+  type: struct
+  alias: hkaWaveletCompressedSkeletalAnimation
+  template:
+    class: esPointer
+  clampVersions: [0, 2010]
+  inherits:
+    hkaAnimation: esPointer
+  members:
+    numberOfPoses: uint32
+    blockSize: uint32
+    qFormat: hkaQuantizationFormat
+    staticMaskIdx: uint32
+    staticMaskSize: uint32
+    blockIndexIdx: uint32
+    blockIndexSize: uint32
+    quantizedDataIdx: uint32
+    quantizedDataSize: uint32
+    dataBuffer:
+      hkHArray:
+        - uint8
+        - esPointer
+  patch:
+    - version: 600
+      members:
+        numStaticTransformDOFs:
+          insertAfter: staticDOFsIdx
+          type: uint32
+        numDynamicTransformDOFs:
+          insertBefore: blockIndexIdx
+          type: uint32
+
+hkaSplineCompressedAnimation:
+  type: struct
+  alias: hkaSplineSkeletalAnimation
+  template:
+    class: esPointer
+  inherits:
+    hkaAnimation: esPointer
+  members:
+    numFrames: uint32
+    numBlocks: uint32
+    maxFramesPerBlock: uint32
+    maskAndQuantizationSize: uint32
+    blockDuration: float
+    blockInverseDuration: float
+    frameDuration: float
+    blockOffsets: &scar
+      type:
+        hkArray:
+          - uint32
+          - esPointer
+    floatBlockOffsets: *scar
+    transformBlockOffsets: *scar
+    floatOffsets: *scar
+    data:
+      type:
+        hkArray:
+          - char
+          - esPointer
+
+hkaBoneAttachment:
+  type: struct
+  template:
+    class: esPointer
+  clampVersions: [0, 2014]
+  members:
+    boneFromAttachment: esMatrix44
+    attachment:
+      hkVariant: esPointer
+    name:
+      esPointer: char
+    boneIndex: int16
+  patch:
+    - version: 600
+      members:
+        skeletonName:
+          insertBefore: boneFromAttachment
+          type:
+            esPointer: char
+    - version: 700
+      inherits:
+        hkReferenceObject: esPointer
+      members:
+        attachment:
+          esPointer: hkReferenceObject
+
+hkaRagdollInstance:
+  type: struct
+  template:
+    class: esPointer
+  clampVersions: [0, 2014]
+  inherits:
+    hkReferenceObject: esPointer
+  members:
+    rigidBodies:
+      type:
+        hkArray:
+          - esPointer: hkpRigidBodyClass
+          - esPointer
+    constraints:
+      type:
+        hkArray:
+          - esPointer: hkpConstraintInstance
+          - esPointer
+    boneToRigidBodyMap:
+      type:
+        hkArray:
+          - int32
+          - esPointer
+    skeleton:
+      esPointer: hkaSkeleton
+
+SimpleMapping:
+  type: struct
+  tied: hkaSkeletonMapper
+  members:
+    boneA: int16
+    boneB: int16
+    aFromBTransform: hkQTransform
+
+ChainMapping:
+  type: struct
+  tied: hkaSkeletonMapper
+  members:
+    startBoneA: int16
+    endBoneA: int16
+    startBoneB: int16
+    endBoneB: int16
+    startAFromBTransform: hkQTransform
+    endAFromBTransform: hkQTransform
+
+PartitionMappingRange:
+  type: struct
+  tied: hkaSkeletonMapper
+  members:
+    startMappingIndex: int32
+    numMappings: int32
+
+MappingType:
+  type: enum
+  tied: hkaSkeletonMapper
+  superType: uint32
+  items:
+    - HK_RAGDOLL_MAPPING
+    - HK_RETARGETING_MAPPING
+
+hkaSkeletonMapper:
+  type: struct
+  template:
+    class: esPointer
+  clampVersions: [0, 2014]
+  inherits:
+    hkReferenceObject: esPointer
+  members:
+    skeletonA:
+      esPointer: hkaSkeleton
+    skeletonB:
+      esPointer: hkaSkeleton
+    simpleMappings:
+      hkArray:
+        - SimpleMapping
+        - esPointer
+    chainMappings:
+      hkArray:
+        - ChainMapping
+        - esPointer
+    unmappedBones:
+      hkArray:
+        - int16
+        - esPointer
+    keepUnmappedLocal: bool
+  patch:
+    - version: 700
+      members:
+        extractedMotionMapping:
+          insertAfter: unmappedBones
+          type: hkQTransform
+        mappingType:
+          insertAfter: keepUnmappedLocal
+          type: MappingType
+    - version: 2012
+      members:
+        partitionMap:
+          insertAfter: skeletonB
+          type:
+            hkArray:
+              - int16
+              - esPointer
+        simpleMappingPartitionRanges:
+          insertAfter: partitionMap
+          type:
+            hkArray:
+              - PartitionMappingRange
+              - esPointer
+        chainMappingPartitionRanges:
+          insertAfter: simpleMappingPartitionRanges
+          type:
+            hkArray:
+              - PartitionMappingRange
+              - esPointer
+
+hkaMeshBinding:
+  type: struct
+  template:
+    class: esPointer
+  clampVersions: [0, 2014]
+  members:
+    mesh:
+      esPointer: hkxMeshClass
+    skeleton:
+      esPointer: hkaSkeleton
+    mappings:
+      hkHArray:
+        - hkArray
+          - int16
+          - esPointer
+        - esPointer
+    boneFromSkinMeshTransforms:
+      hkHArray:
+        - esMatrix44
+        - esPointer
+  patch:
+    - version: 600
+      members:
+        skeletonName:
+          insertAfter: mesh
+          type:
+            esPointer: char
+    - version: 700
+      inherits:
+        hkReferenceObject: esPointer
+    - version: 2011
+      members:
+        name:
+          insertBefore: skeleton
+          type:
+            esPointer: char
+

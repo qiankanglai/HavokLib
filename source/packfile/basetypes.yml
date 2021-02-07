@@ -1,0 +1,100 @@
+version: 1
+
+int8: &int8
+  type: primitive
+  size: 1
+  alignment: 1
+uint8: *int8
+int16: &int16
+  type: primitive
+  size: 2
+  alignment: 2
+uint16: *int16
+int32: &int32
+  type: primitive
+  size: 4
+  alignment: 4
+uint32: *int32
+int64: &int64
+  type: primitive
+  size: 8
+  alignment: 8
+uint64: *int64
+char: *int8
+Vector: &Vector
+  type: primitive
+  size: 12
+  alignment: 4
+IVector: *Vector
+UIVector: *Vector
+SVector: &SVector
+  type: primitive
+  size: 6
+  alignment: 2
+USVector: *SVector
+CVector: &CVector
+  type: primitive
+  size: 3
+  alignment: 1
+UCVector: *CVector
+Vector2: &Vector2
+  type: primitive
+  size: 8
+  alignment: 4
+IVector2: *Vector2
+UIVector2: *Vector2
+SVector2: &SVector2
+  type: primitive
+  size: 4
+  alignment: 2
+USVector2: *SVector2
+CVector2: &CVector2
+  type: primitive
+  size: 2
+  alignment: 1
+UCVector2: *CVector2
+Vector4: &Vector4
+  type: primitive
+  size: 16
+  alignment: 4
+IVector4: *Vector4
+UIVector4: *Vector4
+SVector4: &SVector4
+  type: primitive
+  size: 8
+  alignment: 2
+USVector4: *SVector4
+CVector4: &CVector4
+  type: primitive
+  size: 4
+  alignment: 1
+UCVector4: *CVector4
+Vector4A16: &Vector4A16
+  type: primitive
+  size: 16
+  alignment: 16
+IVector4A16: *Vector4A16
+UIVector4A16: *Vector4A16
+esPointerX64:
+  type: primitive
+  template:
+    class: C
+  size: 8
+  alignment: 8
+esPointerX86:
+  type: primitive
+  template:
+    class: C
+  size: 4
+  alignment: 4
+esPointer:
+  type: permutator
+  items:
+    - esPointerX64
+    - esPointerX86
+es::Flags:
+  type: primitive
+  template:
+    class: C
+  size: C
+  alignment: C

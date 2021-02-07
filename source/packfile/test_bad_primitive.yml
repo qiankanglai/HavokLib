@@ -1,0 +1,139 @@
+# missing version
+noversion: null
+---
+# unsupported version
+version: 1000
+---
+version: 1
+
+nodata:
+  type: primitive
+---
+version: 1
+
+nosize:
+  type: primitive
+  alignment: 1
+---
+version: 1
+
+noalign:
+  type: primitive
+  size: 1
+---
+version: 1
+
+sizealmismatch:
+  type: primitive
+  size: 1
+  alignment: 2
+---
+version: 1
+
+notempl:
+  type: primitive
+  size: targ
+  alignment: 1
+---
+version: 1
+
+invalidtempl:
+  type: primitive
+  template: foo
+  size: 1
+  alignment: 1
+---
+version: 1
+
+invalidtempl:
+  type: primitive
+  template: 
+    - foo
+    - bar
+  size: 1
+  alignment: 1
+---
+version: 1
+
+invalidtempl:
+  type: primitive
+  template: 
+    - class: foo
+    - bar
+  size: 1
+  alignment: 1
+---
+version: 1
+
+invalidtempl:
+  type: primitive
+  template: 
+    class:
+      foo: bar
+      bar: foo
+  size: 1
+  alignment: 1
+---
+version: 1
+
+invalidtempl:
+  type: primitive
+  template: 
+    class:
+      foo: bar
+  size: 1
+  alignment: 1
+---
+version: 1
+
+invalidtempl:
+  type: primitive
+  template: 
+    class:
+      foo:
+        class:
+          bar: foo
+  size: 1
+  alignment: 1
+---
+version: 1
+
+invalidtempl:
+  type: primitive
+  template: 
+    class:
+      foo:
+        - class: bar00
+        - class:
+            bar: foo
+  size: 1
+  alignment: 1
+---
+version: 1
+
+invlatemplded:
+  type: primitive
+  template: 
+    class: argName
+  size: invalidName
+  alignment: 1
+---
+version: 1
+
+invlatemplded:
+  type: primitive
+  template: 
+    class: argName
+  size: 2
+  alignment: invalidName
+---
+version: 1
+
+invlatemplded:
+  type: primitive
+  template: 
+    class: 
+      argname:
+        class: subArg
+  size: 2
+  alignment: subArg
