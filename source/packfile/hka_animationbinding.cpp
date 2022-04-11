@@ -216,6 +216,7 @@ hkClassTier0Alias(hkaAnimationBinding, 2012, 2014);
 hkClassTier0Alias(hkaAnimationBinding, 2012, 2015);
 hkClassTier0Alias(hkaAnimationBinding, 2016, 2016);
 hkClassTier0Alias(hkaAnimationBinding, 2016, 2017);
+hkClassTier0Alias(hkaAnimationBinding, 2016, 2018);
 
 static const std::unordered_map<CRule, hkVirtualClass *(*)()> registry{
     hkRegisterFullClass(hkaAnimationBinding)};

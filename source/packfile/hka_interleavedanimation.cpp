@@ -169,6 +169,7 @@ hkClassTier1Alias(hkaInterleavedAnimation, 700, 2010_1);
 hkClassTier1Alias(hkaInterleavedAnimation, 700, 2010_2);
 hkClassTier1Alias(hkaInterleavedAnimation, 2016, 2016);
 hkClassTier1Alias(hkaInterleavedAnimation, 2016, 2017);
+hkClassTier1Alias(hkaInterleavedAnimation, 2016, 2018);
 
 static const std::unordered_map<CRule, hkVirtualClass *(*)()> registry{
     hkRegisterFullClass(hkaInterleavedAnimation)};

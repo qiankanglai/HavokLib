@@ -55,6 +55,7 @@ struct hkxNewHeader : IhkPackFile, hkChunk {
   std::string dataBuffer;
   std::string classNamesBuffer;
   std::string memberNamesBuffer;
+  std::vector<uint64> compendiumIDs;
 
   StrVec classNames;
   StrVec memberNames;
@@ -64,6 +65,6 @@ struct hkxNewHeader : IhkPackFile, hkChunk {
 
   VirtualClasses &GetAllClasses() override { return virtualClasses; }
   hkToolset GetToolset() const override { return toolset; }
-  void Load(BinReaderRef rd);
+  void Load(BinReaderRef rd, BinReaderRef rd_comp);
   void DumpClassNames(std::ostream &str);
 };

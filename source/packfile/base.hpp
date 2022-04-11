@@ -107,7 +107,8 @@ template <class C, template <class _C> class _ipointer> struct hkVariant {
   hkRegisterVersionedClass(classname, HK2014),\
   hkRegisterVersionedClass(classname, HK2015),\
   hkRegisterVersionedClass(classname, HK2016),\
-  hkRegisterVersionedClass(classname, HK2017)
+  hkRegisterVersionedClass(classname, HK2017),\
+  hkRegisterVersionedClass(classname, HK2018)
 
 // clang-format on
 

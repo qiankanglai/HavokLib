@@ -148,6 +148,7 @@ hkClassTier1Alias(hkaDefaultAnimatedReferenceFrame, 2012, 2014);
 hkClassTier1Alias(hkaDefaultAnimatedReferenceFrame, 2012, 2015);
 hkClassTier1Alias(hkaDefaultAnimatedReferenceFrame, 2016, 2016);
 hkClassTier1Alias(hkaDefaultAnimatedReferenceFrame, 2016, 2017);
+hkClassTier1Alias(hkaDefaultAnimatedReferenceFrame, 2016, 2018);
 
 static const std::unordered_map<CRule, hkVirtualClass *(*)()> registry{
     hkRegisterFullClass(hkaDefaultAnimatedReferenceFrame)};

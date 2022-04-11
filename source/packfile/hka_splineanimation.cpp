@@ -187,12 +187,13 @@ hkClassTier1Alias(hkaSplineCompressedAnimation, 700, 2010_1);
 hkClassTier1Alias(hkaSplineCompressedAnimation, 700, 2010_2);
 hkClassTier1Alias(hkaSplineCompressedAnimation, 2016, 2016);
 hkClassTier1Alias(hkaSplineCompressedAnimation, 2016, 2017);
+hkClassTier1Alias(hkaSplineCompressedAnimation, 2016, 2018);
 
 static const std::unordered_map<CRule, hkVirtualClass *(*)()> registry{
     hkRegisterVersionedClasses(hkaSplineCompressedAnimation, 550, 600, 610, 650,
                                660, 700, 710, 2010_1, 2010_2, 2011_1, 2011_2,
                                2011_3, 2012_1, 2012_2, 2013, 2014, 2015, 2016,
-                               2017)};
+                               2017, 2018)};
 } // namespace
 
 hkVirtualClass *

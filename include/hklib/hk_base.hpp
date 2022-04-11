@@ -27,7 +27,7 @@
 REFLECTOR_CREATE(hkToolset, ENUM, 1, 8, HKUNKVER, HK500, HK510, HK550, HK600,
                  HK610, HK650, HK660, HK700, HK710, HK2010_1, HK2010_2,
                  HK2011_1, HK2011_2, HK2011_3, HK2012_1, HK2012_2, HK2013,
-                 HK2014, HK2015, HK2016, HK2017);
+                 HK2014, HK2015, HK2016, HK2017, HK2018);
 
 using XMLnode = pugi::xml_node;
 

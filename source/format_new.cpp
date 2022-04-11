@@ -59,6 +59,8 @@ template <> struct Read<CompileFourCC("SDKV")> {
         return HK2016;
       case 2017:
         return HK2017;
+      case 2018:
+        return HK2018;
       default:
         return HKUNKVER;
       }
@@ -193,6 +195,44 @@ template <> struct Read<CompileFourCC("ITEM")> {
   };
 };
 
+template <> struct Read<CompileFourCC("TCRF")> {
+  static auto e(BinReaderRef rd, hkChunk *holder, hkxNewHeader *root) {
+    PtrGuard(holder);
+    PtrGuard(root);
+    
+    const size_t savepos = rd.Tell();
+
+    uint64 compId;
+  	rd.Read(compId);
+    if (std::find(root->compendiumIDs.begin(), root->compendiumIDs.end(), compId) == root->compendiumIDs.end()) {
+      throw std::runtime_error("Ref comp id not found.");
+    }
+    
+    const int32 diff = static_cast<int32>(holder->Size()) -
+                       static_cast<int32>(rd.Tell() - savepos);
+    rd.Skip(diff);
+  };
+};
+
+template <> struct Read<CompileFourCC("TCID")> {
+  static auto e(BinReaderRef rd, hkChunk *holder, hkxNewHeader *root) {
+    PtrGuard(holder);
+    PtrGuard(root);
+
+    const size_t savepos = rd.Tell();
+    
+    if (holder->Size() % 8 != 0) {
+      throw std::runtime_error("TCID length {0} can't be mod by 8");
+    }
+
+    for (uint32 i = 0, count = holder->Size() / 8; i < count; i++) {
+      uint64 compId;
+  	  rd.Read(compId);
+      root->compendiumIDs.push_back(compId);
+    }
+  };
+};
+
 template <> struct Read<CompileFourCC("PTCH")> {
   static auto e(BinReaderRef rd, hkChunk *holder, hkxNewHeader *root) {
     PtrGuard(holder);
@@ -279,6 +319,7 @@ template <uint32 fourcc> constexpr auto makeSkip() {
 }
 
 static const std::map<uint32, decltype(&Read<0>::e)> hkChunkRegistry = {
+    makeSkip<CompileFourCC("TCM0")>(), //
     makeSkip<CompileFourCC("TAG0")>(), //
     makeSkip<CompileFourCC("TPTR")>(), //
     makeSkip<CompileFourCC("TPAD")>(), //
@@ -294,6 +335,8 @@ static const std::map<uint32, decltype(&Read<0>::e)> hkChunkRegistry = {
     make<CompileFourCC("ITEM")>(),     //
     make<CompileFourCC("PTCH")>(),     //
     make<CompileFourCC("TNA1")>(),     //
+    make<CompileFourCC("TCID")>(),     //
+    make<CompileFourCC("TCRF")>(),     //
 };
 
 void hkChunk::Reorder() {
@@ -315,7 +358,23 @@ void hkChunk::Read(BinReaderRef rd, hkxNewHeader *root) {
   hkChunkRegistry.at(tag)(rd, this, root);
 }
 
-void hkxNewHeader::Load(BinReaderRef rd) {
+void hkxNewHeader::Load(BinReaderRef rd, BinReaderRef rd_comp) {
+  if (!rd_comp.IsEOF()) {
+	  rd_comp.Read(static_cast<hkChunk &>(*this));
+	  Reorder();
+
+	  if (tag != CompileFourCC("TCM0")) {
+	    throw es::InvalidHeaderError(tag);
+	  }
+
+	  const uint32 fileSize = Size();
+
+	  while (rd_comp.Tell() < fileSize) {
+	    hkChunk curChunk;
+	    curChunk.Read(rd_comp, this);
+	  }
+  }
+
   rd.Read(static_cast<hkChunk &>(*this));
   Reorder();
 

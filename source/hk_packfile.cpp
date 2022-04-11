@@ -15,6 +15,7 @@
     along with this program.If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <filesystem>
 #include "toolset.hpp"
 
 #include "datas/binreader.hpp"
@@ -28,6 +29,20 @@
 
 IhkPackFile::Ptr IhkPackFile::Create(const std::string &fileName) {
   BinReader rd(fileName);
+  BinReader comp_rd;
+  int split = fileName.find_last_of("/\\");
+  if (split != std::string::npos)
+  {
+    std::string folderName = fileName.substr(0, split);
+    for(auto& entry : std::filesystem::directory_iterator( folderName ))
+    {
+      if (is_regular_file(entry.status()) && entry.path().extension() == ".compendium")
+      {
+        comp_rd.Open(entry.path().string());
+        break;
+      }
+    }
+  }
 
   struct {
     uint32 ID1, ID2;
@@ -42,7 +57,7 @@ IhkPackFile::Ptr IhkPackFile::Create(const std::string &fileName) {
     return std::move(hdr);
   } else if (testerStruct.ID2 == hkHederTAG) {
     auto hdr = std::make_unique<hkxNewHeader>();
-    hdr->Load(rd);
+    hdr->Load(rd, comp_rd);
     return std::move(hdr);
   }
 
